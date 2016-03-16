@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js">
+      
+    </script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <title>Drone Strikes</title>
+  <script src='drones.geojson'></script>
+
+</head>
+<style>
+  body{
+    margin:0px;
+    padding:0px;
+  }
+  #map {
+    height: 100vh;
+    z-index:1;
+    }
+  #sidebar {
+    float:left;
+    height:100vh;
+    width:300px;
+    background-color:white;
+    z-index:2;
+  }
+  #plot{
+    width:100vw;
+    height: 200px;
+    margin: 0px;
+    position: fixed;
+    padding: 0px;
+    bottom:3px;
+    z-index:3;
+    
+  }
+    
+  b{font-weight: 900;}
+</style>
+
+<body>
+    <div id='sidebar'>
+      <select id='dropdown' onchange='update()'>
+        <option value="Maximum Children Reported Killed">Maximum Children Reported Killed</option>
+        <option value="Maximum Civilians Reported Killed">Maximum Civilians Reported Killed</option>
+        <option value="Maximum Total Reported Killed">Maximum Total Reported Killed</option>
+        <option value="Minimum Children Reported Killed">Minimum Children Reported Killed</option>
+        <option value="Minimum Civilians Reported Killed">Minimum Civilians Reported Killed</option>
+        <option value="Minimum Total Reported Killed">Minimum Total Reported Killed</option>
+        
+      </select>
+      
+    </div>
+    <div id="map">
+      
+    </div>
+    <div id='plot'></div>
+</body>
+<script>
+// This is the onchange call for the selectbox
+//
+function update(){
+    var drop = document.getElementById('dropdown'); // get box
+    var selected = drop.options[drop.selectedIndex].value; // get selected value
+    newPlot(selected); // pass Y axis value to the new Plot function
+    // onchange events for the map should go here and
+    // probably in another function that is called in like newPlot
+  }
+// The following function creates/updates the plot
+function newPlot(ystring, yArray){
+    Plot = document.getElementById('plot'); // get plot div
+    xArray = []; // what is going to be the x value
+    yArray = []; // the X value is always date. Might be able to get better
+                // performance claculating this once then calling it in.
+                // Not worrying about it for simplicity
+    for(var i = 0; i < geojson.features.length; i++){ // loop through features
+      yArray.push(geojson.features[i].properties[ystring]); // grabing the Y value
+      xArray.push(geojson.features[i].properties['Date']);
+    };
+  	Plotly.newPlot( Plot, [{ //making a plot, don't really know this very well.
+  	x: xArray,
+  	y: yArray }], {
+  	margin: { t: 0 } } );
+    
+  }
+  newPlot('Maximum Total Reported Killed')
+
+// BEGIN LEAFLET CODE
+
+var map = L.map("map").setView([33.1, 69.9], 8)
+
+var geojsonMarkerOptions = {
+    radius: 4,
+    fillColor: "#808080",
+    color: "#000",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.8
+};
+
+function onEachFeature(feature, layer) {
+    if (feature.properties && feature.properties.popupContent) {
+        layer.bindPopup(feature.properties.popupContent);
+    }
+};
+L.geoJson(geojson, {
+    onEachFeature: onEachFeature,
+    pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, geojsonMarkerOptions);
+    }
+}).addTo(map);
+L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiZG9tZHAxIiwiYSI6Imx0SFpObk0ifQ.Ds4fAeW-v0w4yLqt_2Q3uQ',
+  {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id:'domdp1.c5b817e2',
+    accessToken:'pk.eyJ1IjoiZG9tZHAxIiwiYSI6Imx0SFpObk0ifQ.Ds4fAeW-v0w4yLqt_2Q3uQ',
+}).addTo(map);
+</script>
+
+  
+</body>
