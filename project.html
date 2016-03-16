@@ -127,8 +127,11 @@ function UpdatePlotandMap(ystring, yArray){
                 // performance claculating this once then calling it in.
                 // Not worrying about it for simplicity
     for(var i = 0; i < geojson.features.length; i++){ // loop through features
-      yArray.push(geojson.features[i].properties[ystring]); // grabing the Y value
-      xArray.push(geojson.features[i].properties['Date']);
+     if(geojson.features[i].properties[ystring] > 0){
+        yArray.push(geojson.features[i].properties[ystring]); // grabing the Y value
+        xArray.push(geojson.features[i].properties['Date'])
+        
+      };
     };
   	Plotly.newPlot( Plot, [{ //making a plot, don't really know this very well.
   	x: xArray,
