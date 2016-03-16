@@ -61,33 +61,6 @@
     <div id='plot'></div>
 </body>
 <script>
-// This is the onchange call for the selectbox
-//
-function update(){
-    var drop = document.getElementById('dropdown'); // get box
-    var selected = drop.options[drop.selectedIndex].value; // get selected value
-    newPlot(selected); // pass Y axis value to the new Plot function
-    // onchange events for the map should go here and
-    // probably in another function that is called in like newPlot
-  }
-// The following function creates/updates the plot
-function newPlot(ystring, yArray){
-    Plot = document.getElementById('plot'); // get plot div
-    xArray = []; // what is going to be the x value
-    yArray = []; // the X value is always date. Might be able to get better
-                // performance claculating this once then calling it in.
-                // Not worrying about it for simplicity
-    for(var i = 0; i < geojson.features.length; i++){ // loop through features
-      yArray.push(geojson.features[i].properties[ystring]); // grabing the Y value
-      xArray.push(geojson.features[i].properties['Date']);
-    };
-  	Plotly.newPlot( Plot, [{ //making a plot, don't really know this very well.
-  	x: xArray,
-  	y: yArray }], {
-  	margin: { t: 0 } } );
-    
-  }
-  newPlot('Maximum Total Reported Killed')
 
 // BEGIN LEAFLET CODE
 
@@ -101,11 +74,12 @@ var geojsonMarkerOptions = {
     opacity: 1,
     fillOpacity: 0.8
 };
-
+console.log(geojson)
 function onEachFeature(feature, layer) {
-    if (feature.properties && feature.properties.popupContent) {
-        layer.bindPopup(feature.properties.popupContent);
-    }
+    // TODO should add some style to this html block
+    popupContent =  "<table><tr><td>Maximum Children Reported Killed: " +  feature.properties['Maximum Children Reported Killed'] + "</td></tr>" + "<tr><td>Maximum Total Reported Killed: " +  feature.properties['Maximum Total Reported Killed'] + "</td></tr>" + "<tr><td>Maximum Civilians Reported Killed: " +  feature.properties['Maximum Civilians Reported Killed'] + "</td></tr>"+ "<tr><td>Minimum Children Reported Killed: " +  feature.properties["Minimum Children Reported Killed"] + "</td></tr>"+ "<tr><td>Minimum Civilians Reported Killed: " +  feature.properties['Minimum Civilians Reported Killed'] + "</td></tr>"+ "<tr><td>Minimum Total Reported Killed: " +  feature.properties['Minimum Total Reported Killed'] + "</td></tr>"
+    layer.bindPopup(popupContent);
+
 };
 L.geoJson(geojson, {
     onEachFeature: onEachFeature,
@@ -120,6 +94,51 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
     id:'domdp1.c5b817e2',
     accessToken:'pk.eyJ1IjoiZG9tZHAxIiwiYSI6Imx0SFpObk0ifQ.Ds4fAeW-v0w4yLqt_2Q3uQ',
 }).addTo(map);
+// BEGIN PLOT/UPDATE CODE
+// This is the onchange call for the selectbox
+//
+function updatePropSymbols(map, attribute){
+    map.eachLayer(function(layer){
+      //console.log(layer)
+      //Example 3.16 line 4
+        if (layer.feature && layer.feature.properties[attribute]){
+            //access feature properties
+            var props = layer.feature.properties;
+
+            //update each feature's radius based on new attribute values
+            var radius = props[attribute] * 0.5;
+            layer.setRadius(radius);
+
+        };
+    });
+};
+function update(){
+    var drop = document.getElementById('dropdown'); // get box
+    var selected = drop.options[drop.selectedIndex].value; // get selected value
+    UpdatePlotandMap(selected); // pass Y axis value to the new Plot function
+    // onchange events for the map should go here and
+    // probably in another function that is called in like newPlot
+  }
+// The following function creates/updates the plot (and map?)
+function UpdatePlotandMap(ystring, yArray){
+    Plot = document.getElementById('plot'); // get plot div
+    xArray = []; // what is going to be the x value
+    yArray = []; // the X value is always date. Might be able to get better
+                // performance claculating this once then calling it in.
+                // Not worrying about it for simplicity
+    for(var i = 0; i < geojson.features.length; i++){ // loop through features
+      yArray.push(geojson.features[i].properties[ystring]); // grabing the Y value
+      xArray.push(geojson.features[i].properties['Date']);
+    };
+  	Plotly.newPlot( Plot, [{ //making a plot, don't really know this very well.
+  	x: xArray,
+  	y: yArray }], {
+  	margin: { t: 0 } } );
+  	updatePropSymbols(map,ystring)
+    
+  }
+  UpdatePlotandMap('Maximum Total Reported Killed')
+  
 </script>
 
   
