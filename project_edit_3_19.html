@@ -120,7 +120,18 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
 // This is the onchange call for the selectbox
 //
 
-	
+// function to create classes for symbols based on attribute value
+//too many classes?
+function getRadius(d) {
+		return d > 1000 ? 100 :
+			   d > 75   ? 75  :
+			   d > 50   ? 50  :
+			   d > 25   ? 25  :
+			   d > 10   ? 10  :
+			   d > 5    ? 5   :
+			   d > 2    ? 2   :
+				      	  0;
+	}		
 	
 function updatePropSymbols(map, attribute,rad){
     map.eachLayer(function(layer){
@@ -138,8 +149,8 @@ function updatePropSymbols(map, attribute,rad){
 			//possibly break symbols into classes
 			//use if else statements to produce classes
 			else{			
-			var radius = props[attribute] * rad;
-            layer.setRadius(radius);
+			var radius = getRadius(props[attribute]) *rad;
+			layer.setRadius(radius);
 			}
 			//can change colors if needed just for quick symbolization
 			if (props["Time Period"] == "Night"){
