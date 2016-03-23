@@ -86,7 +86,7 @@
           <select id='dropdown' onchange='update()'>
             <option value="Maximum Children Reported Killed">Maximum Children Reported Killed</option>
             <option value="Maximum Civilians Reported Killed">Maximum Civilians Reported Killed</option>
-            <option value="Maximum Total Reported Killed">Maximum Total Reported Killed</option>
+            <option value="Maximum Total Reported Killed" selected>Maximum Total Reported Killed</option>
             <option value="Minimum Children Reported Killed">Minimum Children Reported Killed</option>
             <option value="Minimum Civilians Reported Killed">Minimum Civilians Reported Killed</option>
             <option value="Minimum Total Reported Killed">Minimum Total Reported Killed</option>
@@ -95,13 +95,13 @@
         </div>
         <div id='radiusDrop'>Change Radius
       		<select id='dropdown1' onchange='update()'>
-                <option value=".1">1</option>
-                <option value=".2">2</option>
-                <option value=".4">4</option>
-                <option value=".6">6</option>
-                <option value=".8">8</option>
-                <option value="1.01">10</option>
-        		    <option value="Sqrt">Square Root</option>
+                <option value=".1">10% scaling</option>
+                <option value=".2">20% scaling</option>
+                <option value=".4">40% scaling</option>
+                <option value=".6">60% scaling</option>
+                <option value=".8">80% scaling</option>
+                <option value="1.01">100% scaling</option>
+        		    <option value="Sqrt" selected>Square Root Transform</option>
       		        
           </select>
         </div>
@@ -165,8 +165,7 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
 // function to create classes for symbols based on attribute value
 //too many classes?
 function getRadius(d) {
-		return d > 1000 ? 100 :
-			   d > 75   ? 75  :
+		return d > 75   ? 75  :
 			   d > 50   ? 50  :
 			   d > 25   ? 25  :
 			   d > 10   ? 10  :
@@ -204,16 +203,16 @@ function updatePropSymbols(map, attribute,rad){
       			}
       			//can change colors if needed just for quick symbolization
       			if (props["Time Period"] == "Night"){
-      				layer.setStyle({fillColor:"#0c0c0c"}); //set circle to black
+      				layer.setStyle({fillColor:"#0c0c0c",fillOpacity: 0.8}); //set circle to black
       			}
       			if (props["Time Period"] == "Evening"){ //set to blue
-      				layer.setStyle({fillColor:"#a1b099"});
+      				layer.setStyle({fillColor:"#a1b099",fillOpacity: 0.8});
       			}
       			if (props["Time Period"] == "Morning"){ //set to light yellow
-      				layer.setStyle({fillColor:"#ffff66"});
+      				layer.setStyle({fillColor:"#ffff66",fillOpacity: 0.8});
       			}
       			if (props["Time Period"] == "Afternoon"){ //set to orange
-      				layer.setStyle({fillColor:"#ffb426"});
+      				layer.setStyle({fillColor:"#ffb426",fillOpacity: 0.8});
       			}
         };
     });
@@ -243,21 +242,22 @@ function UpdatePlotandMap(ystring, rad){
     Plot = document.getElementById('plot'); // get plot div
     xArray = []; // what is going to be the x value
     var radius = rad
-	yArray = []; // the X value is always date. Might be able to get better
+	  yArray = []; // the X value is always date. Might be able to get better
                 // performance claculating this once then calling it in.
                 // Not worrying about it for simplicity
+    uidArray = []
     for(var i = 0; i < geojson.features.length; i++){ // loop through features
      if(geojson.features[i].properties[ystring] > 0){
         yArray.push(geojson.features[i].properties[ystring]); // grabing the Y value
         xArray.push(geojson.features[i].properties['Date'])
-        
       };
     };
   	Plotly.newPlot( Plot, [{ //making a plot, don't really know this very well.
                           	x: xArray,
-                          	y: yArray }],
+                          	y: yArray,
+  	}],
                     layout);
-  	
+                  
   	updatePropSymbols(map,ystring,radius)
 		
     
@@ -287,7 +287,8 @@ function makeLegend() {
 };
 
 makeLegend()
-  
+
+
 
 
 
