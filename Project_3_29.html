@@ -45,12 +45,11 @@
   }
   #attrDrop{
     margin-left:35px;
-    margin-top:15px;
   }
   #radiusDrop {
 	position:absolute;
-	width:150px;
-	top:65px;
+	width:200px;
+	top:18vh;
 	left:0px;
 	margin-left:35px;
 }
@@ -58,12 +57,12 @@
 #Legend {
 	position:absolute;
 	width:150px;
-	top:115px;
+	top:25vh;
 	left:0px;
 	margin-left:35px;
 }
 #legendTitle{
-  margin-bottom:0px;
+  margin-top:10px;
 }
 
 #plot{
@@ -76,13 +75,38 @@
     z-index:3;
     
   }
+#popup{
+  font-weight:bold;
+  font-size:10pt;
+  line-height: 160%;
+}
+#poptable{
+  font-size:10pt;
+}
     
   b{font-weight: 900;}
+
+h4{
+  margin:0px;
+}
+h2{
+  margin-left:5px;
+  margin-right:auto;
+  margin-bottom:0px;
+  text-align:center;
+  display:inline-block;
+}
+h5{
+  margin-top:0px;
+  margin-bottom:2px;
+  text-align:center;
+}
 </style>
 
 <body>
-      <div id='sidepanel'>
-        <div id='attrDrop'>Change Attribute
+      <div id='sidepanel'><h2>Drone Strikes in Pakistan</h2><br>
+      <h5><it>2004-2013</it></h5>
+        <div id='attrDrop'><h4>Attribute Displayed:</h4>
           <select id='dropdown' onchange='update()'>
             <option value="Maximum Children Reported Killed">Maximum Children Reported Killed</option>
             <option value="Maximum Civilians Reported Killed">Maximum Civilians Reported Killed</option>
@@ -93,20 +117,20 @@
             
         </select>
         </div>
-        <div id='radiusDrop'>Change Radius
+        <div id='radiusDrop'><h4>Symbol Scale factor:</h4>
       		<select id='dropdown1' onchange='update()'>
                 <option value=".1">10% scaling</option>
                 <option value=".2">20% scaling</option>
-                <option value=".4">40% scaling</option>
+                <option value=".4" selected>40% scaling</option>
                 <option value=".6">60% scaling</option>
                 <option value=".8">80% scaling</option>
                 <option value="1.01">100% scaling</option>
-        		    <option value="Sqrt" selected>Square Root Transform</option>
+        		    <option value="Sqrt" >Square Root Transform</option>
       		        
           </select>
         </div>
       <div id='Legend'>
-        <p id='legendTitle'>Timing of Strike</p>
+        <h4 id='legendTitle'>Timing of Strike</h4>
         <table id='LegendTable'></table>
   	 </div>
     </div>
@@ -124,7 +148,7 @@
 
 var map = L.map("map",{
   zoomControl:false
-}).setView([33.1, 69.9], 8)
+}).setView([32.6, 69.9], 8)
 
 L.control.zoom({
      position:'topright'
@@ -140,9 +164,8 @@ var geojsonMarkerOptions = {
 };
 //console.log(geojson)
 function onEachFeature(feature, layer) {
-    // TODO should add some style to this html block
-    popupContent =  "<table><tr><td>Maximum Children Reported Killed: " +  feature.properties['Maximum Children Reported Killed'] + "</td></tr>" + "<tr><td>Maximum Total Reported Killed: " +  feature.properties['Maximum Total Reported Killed'] + "</td></tr>" + "<tr><td>Maximum Civilians Reported Killed: " +  feature.properties['Maximum Civilians Reported Killed'] + "</td></tr>"+ "<tr><td>Minimum Children Reported Killed: " +  feature.properties["Minimum Children Reported Killed"] + "</td></tr>"+ "<tr><td>Minimum Civilians Reported Killed: " +  feature.properties['Minimum Civilians Reported Killed'] + "</td></tr>"+ "<tr><td>Minimum Total Reported Killed: " +  feature.properties['Minimum Total Reported Killed'] + "</td></tr>"
-    layer.bindPopup(popupContent);
+    popupContent =  "<table id='poptable'><tr><td id='popup'>Maximum Children Reported Killed: </td><td>" +  feature.properties['Maximum Children Reported Killed'] + "</td></tr>" + "<tr><td id='popup'>Maximum Total Reported Killed:</td><td> " +  feature.properties['Maximum Total Reported Killed'] + "</td></tr>" + "<tr><td id='popup'>Maximum Civilians Reported Killed: </td><td>" +  feature.properties['Maximum Civilians Reported Killed'] + "</td></tr>"+ "<tr><td id='popup'>Minimum Children Reported Killed:</td><td> " +  feature.properties["Minimum Children Reported Killed"] + "</td></tr>"+ "<tr><td id='popup'>Minimum Civilians Reported Killed:</td><td> " +  feature.properties['Minimum Civilians Reported Killed'] + "</td></tr>"+ "<tr><td id='popup'>Minimum Total Reported Killed:</td><td> " +  feature.properties['Minimum Total Reported Killed'] + "</td></tr>"
+    layer.bindPopup(popupContent)
 
 };
 L.geoJson(geojson, {
@@ -221,7 +244,7 @@ function update(){
     var drop = document.getElementById('dropdown'); // get box
     var selected = drop.options[drop.selectedIndex].value; // get selected value
  // pass Y axis value to the new Plot function
-	var Rad_drop= document.getElementById('dropdown1'); //change to 'dropdown1' to activate non-map dropdown; delete lines 195-203
+	  var Rad_drop= document.getElementById('dropdown1'); //change to 'dropdown1' to activate non-map dropdown; delete lines 195-203
     var selectedRad = Rad_drop.options[Rad_drop.selectedIndex].value;
 	//console.log(selectedRad);
 	UpdatePlotandMap(selected,selectedRad);
@@ -262,17 +285,17 @@ function UpdatePlotandMap(ystring, rad){
 		
     
   }
-  UpdatePlotandMap('Maximum Total Reported Killed',true)
+  UpdatePlotandMap('Maximum Total Reported Killed',0.4)
 
 var legend = L.control({position: 'bottomright'});
 
 function makeLegend() {
   
-    console.log('adding Legend')
+    //console.log('adding Legend')
     var div = document.getElementById('LegendTable');
     var grades = ['Morning','Afternoon','Evening','Night'];
     var labels = [];
-    console.log(div)
+    //console.log(div)
 
     // loop through our density intervals and generate a label with a colored square for each interval
     for (var i = 0; i < grades.length; i++) {
@@ -282,7 +305,7 @@ function makeLegend() {
         var label =  grades[i]
         div.innerHTML +=
             '<tr><td id="legendcolor" style=background-color:' + color + '></td><td>'  + label + '</td></tr>' ;
-        console.log(div)
+        //console.log(div)
     }
 };
 
