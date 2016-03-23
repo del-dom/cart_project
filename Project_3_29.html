@@ -31,7 +31,7 @@
     position: absolute;
     top: 0px;
     left: 0px;
-    height: 50vh;
+    height: 60vh;
     width: 300px;
     background-color: #f6f6f6;
     overflow-y: scroll;
@@ -46,10 +46,18 @@
   #attrDrop{
     margin-left:35px;
   }
-  #radiusDrop {
+#radiusDrop {
 	position:absolute;
 	width:200px;
-	top:18vh;
+	top:19vh;
+	left:0px;
+	margin-left:35px;
+}
+
+#dim {
+	position:absolute;
+	width:150px;
+	top:27vh;
 	left:0px;
 	margin-left:35px;
 }
@@ -57,7 +65,7 @@
 #Legend {
 	position:absolute;
 	width:150px;
-	top:25vh;
+	top:34vh;
 	left:0px;
 	margin-left:35px;
 }
@@ -129,6 +137,15 @@ h5{
       		        
           </select>
         </div>
+        <div id='dim'><h4>Filter Strikes</h4>
+    		<select id='opacity' onchange='update()'>
+    		    <option value="5">No Opacity</option>
+    		    <option value="1">Morning</option>
+    		    <option value="2">Afternoon</option>
+    		    <option value="3">Evening</option>
+    		    <option value="4">Night</option>
+    		</select>
+	</div>
       <div id='Legend'>
         <h4 id='legendTitle'>Timing of Strike</h4>
         <table id='LegendTable'></table>
