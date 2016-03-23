@@ -25,37 +25,48 @@
     height: 100vh;
     z-index:1;
     }
-  #sidebar {
-    float:left;
-    height:100vh;
-    width:300px;
-    background-color:white;
-    z-index:2;
+  #sidepanel{
+    line-height: 160%;
+    letter-spacing: 1px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 50vh;
+    width: 300px;
+    background-color: #f6f6f6;
+    overflow-y: scroll;
+    z-index: 2;
+    box-shadow: 10px 10px 5px #888888;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    overflow-y: hidden;
+    
+  }
+  #attrDrop{
+    margin-left:35px;
+    margin-top:15px;
   }
   #radiusDrop {
 	position:absolute;
-	width:100px;
+	width:150px;
 	top:65px;
 	left:0px;
-	background-color:white;
 	margin-left:35px;
 }
-#sidebar{
-  margin-left:35px;
-  margin-top:15px;
-}
 
-  #Legend {
+#Legend {
 	position:absolute;
 	width:150px;
 	top:115px;
 	left:0px;
-	background-color:white;
 	margin-left:35px;
 }
+#legendTitle{
+  margin-bottom:0px;
+}
 
-
-  #plot{
+#plot{
     width:100vw;
     height: 200px;
     margin: 0px;
@@ -70,7 +81,8 @@
 </style>
 
 <body>
-    <div id='sidebar'>Change Attribute
+      <div id='sidepanel'>
+        <div id='attrDrop'>Change Attribute
           <select id='dropdown' onchange='update()'>
             <option value="Maximum Children Reported Killed">Maximum Children Reported Killed</option>
             <option value="Maximum Civilians Reported Killed">Maximum Civilians Reported Killed</option>
@@ -79,7 +91,8 @@
             <option value="Minimum Civilians Reported Killed">Minimum Civilians Reported Killed</option>
             <option value="Minimum Total Reported Killed">Minimum Total Reported Killed</option>
             
-          </select>
+        </select>
+        </div>
         <div id='radiusDrop'>Change Radius
       		<select id='dropdown1' onchange='update()'>
                 <option value=".1">1</option>
