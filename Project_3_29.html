@@ -31,7 +31,7 @@
     position: absolute;
     top: 0px;
     left: 0px;
-    height: 57vh;
+    height: 400px;
     width: 300px;
     background-color: #f6f6f6;
     overflow-y: scroll;
@@ -49,7 +49,7 @@
 #radiusDrop {
 	position:absolute;
 	width:200px;
-	top:19vh;
+	top:130px;
 	left:0px;
 	margin-left:35px;
 }
@@ -65,7 +65,7 @@
 #Legend {
 	position:absolute;
 	width:150px;
-	top:27vh;
+	top:180px;
 	left:0px;
 	margin-left:35px;
 }
@@ -272,11 +272,11 @@ function updatePropSymbols(map, attribute,rad,timePeriods){
 			//maybe make function to clean up or shorten?
 			      //console.log(layer.feature)
     			 if (timePeriods.contains(props["Time Period"])){
-    					layer.setStyle({fillOpacity:1, opacity:1});
+    					layer.setStyle({fillOpacity:0.7, opacity:0.8});
     				}else if(timePeriods.length==0){
-    				  layer.setStyle({fillOpacity:1, opacity:1})
+    				  layer.setStyle({fillOpacity:0.7, opacity:0.8})
     				}else{
-    				  console.log(props["Time Period"],props["Maximum Total Reported Killed"])
+    				  //console.log(props["Time Period"],props["Maximum Total Reported Killed"])
     					layer.setStyle({fillOpacity:0, opacity:0, radius:0})
     			}
     }
@@ -339,8 +339,8 @@ function UpdatePlotandMap(ystring, rad, timePeriod){
           yArray.push(geojson.features[i].properties[ystring]); // grabing the Y value
           xArray.push(geojson.features[i].properties['Date'])
         }else if (geojson.features[i].properties[ystring] > 0 && timePeriods.length < 1){
-        yArray.push(geojson.features[i].properties[ystring]); // grabing the Y value
-        xArray.push(geojson.features[i].properties['Date'])
+          yArray.push(geojson.features[i].properties[ystring]); // grabing the Y value
+          xArray.push(geojson.features[i].properties['Date'])
       }//else{//console.log(geojson.features[i].properties["Time Period"],geojson.features[i].properties["Time Period"].length )};
     };
   	Plotly.newPlot( Plot, [{ //making a plot, don't really know this very well.
@@ -349,6 +349,52 @@ function UpdatePlotandMap(ystring, rad, timePeriod){
   	}],
                     layout);
                   
+
+    Plot.on('plotly_click',function(data){
+      var drop = document.getElementById('dropdown'); // get box
+      var selected = drop.options[drop.selectedIndex].value;
+      map.eachLayer(function(layer){
+        if (layer.feature && layer.feature.properties[selected]){
+          //console.log( data.points[0].x)
+          var props = layer.feature.properties;
+          if (layer.feature.properties['Date'] == data.points[0].x){
+
+              if(props[selected] == data.points[0].y){
+                layer.setStyle({fillColor:"#FF0000",fillOpacity: 1})
+                  console.log('match')
+            }
+          }else{
+              if (props["Time Period"] == "Night"){
+                layer.setStyle({fillColor:"#0c0c0c",fillOpacity: 0.7}); //set circle to black
+              }
+              if (props["Time Period"] == "Evening"){ //set to blue
+                layer.setStyle({fillColor:"#a1b099",fillOpacity: 0.7});
+              }
+              if (props["Time Period"] == "Morning"){ //set to light yellow
+                layer.setStyle({fillColor:"#ffff66",fillOpacity: 0.7});
+              }
+              if (props["Time Period"] == "Afternoon"){ //set to orange
+                layer.setStyle({fillColor:"#ffb426",fillOpacity: 0.7});
+              }
+              if (props["Time Period"] == ""){
+                layer.setStyle({fillColor:"#7FFF00",fillOpacity: 0.7});
+              }
+       
+              //use opacity to filter strikes based time of day
+              //maybe make function to clean up or shorten?
+              //console.log(layer.feature)
+             if (timePeriods.contains(props["Time Period"])){
+                layer.setStyle({fillOpacity:0.7, opacity:1});
+              }else if(timePeriods.length==0){
+                layer.setStyle({fillOpacity:0.7, opacity:1})
+              }else{
+                layer.setStyle({fillOpacity:0, opacity:0, radius:0})
+            }
+          }
+      }
+    })
+
+    })
   	updatePropSymbols(map,ystring,radius,timePeriods)
 		
     
