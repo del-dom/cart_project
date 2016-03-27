@@ -361,6 +361,7 @@ function UpdatePlotandMap(ystring, rad, timePeriod){
 
               if(props[selected] == data.points[0].y){
                 layer.setStyle({fillColor:"#FF0000",fillOpacity: 1})
+                layer.bringToFront(); //bring marker to top/front; makes more visible
                   console.log('match')
             }
           }else{
