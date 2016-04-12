@@ -193,6 +193,15 @@ function onEachFeature(feature, layer) {
     layer.bindPopup(popupContent)
 
 };
+
+pakistan = L.geoJson(pak,
+	{stroke:true,
+	color:'#000000',
+	fillOpacity:0,
+	opacity:1,
+	weight:3
+	}).addTo(map);
+
 L.geoJson(geojson, {
     onEachFeature: onEachFeature,
     pointToLayer: function (feature, latlng) {
